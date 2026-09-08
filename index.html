@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>4–7–8 Triangle Breathing</title>
+<style>
+  :root{
+    --blue:#38aef8;
+    --purple:#9b7bea;
+    --green:#35c98b;
+    --ink:#172033;
+    --muted:#667085;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:#fff;
+    color:var(--ink);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+  .app{
+    width:min(96vw,780px);
+    padding:28px 14px 34px;
+    text-align:center;
+  }
+
+  h1{
+    margin:0 0 6px;
+    font-size:clamp(1.65rem,5vw,2.55rem);
+    letter-spacing:-.035em;
+  }
+
+  .subtitle{
+    margin:0 auto 20px;
+    max-width:590px;
+    color:var(--muted);
+    font-size:clamp(.9rem,2.6vw,1.05rem);
+    line-height:1.5;
+  }
+
+  .card{
+    position:relative;
+    width:min(94vw,650px);
+    aspect-ratio:1/.92;
+    margin:0 auto 18px;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    border-radius:34px;
+    background:#fff;
+    box-shadow:0 12px 45px rgba(16,24,40,.10);
+    border:1px solid #edf0f4;
+  }
+
+  svg{
+    width:96%;
+    height:96%;
+    overflow:visible;
+  }
+
+  .edge{
+    fill:none;
+    stroke-width:12;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .base{opacity:.16}
+  .blue{stroke:var(--blue)}
+  .purple{stroke:var(--purple)}
+  .green{stroke:var(--green)}
+
+  .active{
+    stroke-dasharray:1;
+    stroke-dashoffset:1;
+  }
+
+  .corner{
+    transition:transform .35s ease;
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+
+  .corner.active-corner{
+    transform:scale(1.12);
+  }
+
+  .bubble{
+    stroke-width:3;
+  }
+
+  .cartoon-face{
+    font-size:78px;
+    text-anchor:middle;
+    dominant-baseline:middle;
+    user-select:none;
+  }
+
+  .phase{
+    position:absolute;
+    left:50%;
+    top:52%;
+    transform:translate(-50%,-50%);
+    width:50%;
+    pointer-events:none;
+  }
+
+  .phase-name{
+    font-size:clamp(1.15rem,4vw,1.55rem);
+    font-weight:800;
+    margin-bottom:5px;
+  }
+
+  .timer{
+    font-size:clamp(3.2rem,12vw,5rem);
+    font-weight:850;
+    line-height:1;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .hint{
+    margin-top:8px;
+    color:var(--muted);
+    font-size:.9rem;
+  }
+
+  .legend{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:0 auto 17px;
+  }
+
+  .pill{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 12px;
+    border:1px solid #e8ebf0;
+    border-radius:999px;
+    background:#fff;
+    font-size:.84rem;
+    color:#475467;
+  }
+
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+  }
+  .dot.blue{background:var(--blue)}
+  .dot.purple{background:var(--purple)}
+  .dot.green{background:var(--green)}
+
+  button{
+    border:0;
+    border-radius:999px;
+    padding:12px 28px;
+    background:#172033;
+    color:#fff;
+    font-size:1rem;
+    font-weight:750;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(23,32,51,.18);
+  }
+
+  button:hover{transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+
+  .footer{
+    margin-top:14px;
+    color:#98a2b3;
+    font-size:.75rem;
+  }
+
+  @media(max-width:430px){
+    .app{padding-top:18px}
+    .card{border-radius:25px}
+    .cartoon-face{font-size:62px}
+    .phase{width:56%}
+    .pill{padding:7px 9px;font-size:.76rem}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
+</style>
+</head>
+
+<body>
+<main class="app">
+  <h1>🌿 4–7–8 Triangle Breathing</h1>
+  <p class="subtitle">
+    Follow the triangle clockwise: breathe in, hold, then slowly breathe out.
+  </p>
+
+  <section class="card" aria-live="polite">
+    <svg viewBox="0 0 700 620" aria-label="Clockwise animated 4-7-8 breathing triangle">
+
+      <!-- Triangle geometry: top → bottom-right → bottom-left → top = clockwise -->
+      <path class="edge base blue" d="M350 65 L610 520"/>
+      <path class="edge base purple" d="M610 520 L90 520"/>
+      <path class="edge base green" d="M90 520 L350 65"/>
+
+      <!-- Animated clockwise edges -->
+      <path id="edge0" class="edge active blue" d="M350 65 L610 520" pathLength="1"/>
+      <path id="edge1" class="edge active purple" d="M610 520 L90 520" pathLength="1"/>
+      <path id="edge2" class="edge active green" d="M90 520 L350 65" pathLength="1"/>
+
+      <!-- Big expressive cartoon icons -->
+      <g id="corner0" class="corner active-corner">
+        <circle class="bubble" cx="350" cy="65" r="62"
+                fill="#e9f7ff" stroke="var(--blue)"/>
+        <text class="cartoon-face" x="350" y="67">😮‍💨</text>
+      </g>
+
+      <g id="corner1" class="corner">
+        <circle class="bubble" cx="610" cy="520" r="62"
+                fill="#f1edff" stroke="var(--purple)"/>
+        <text class="cartoon-face" x="610" y="522">🧘</text>
+      </g>
+
+      <g id="corner2" class="corner">
+        <circle class="bubble" cx="90" cy="520" r="62"
+                fill="#e9fbf4" stroke="var(--green)"/>
+        <text class="cartoon-face" x="90" y="522">😌</text>
+      </g>
+
+      <!-- Soft center -->
+      <circle cx="350" cy="310" r="104" fill="#fafbfc" stroke="#eef0f3" stroke-width="2"/>
+    </svg>
+
+    <div class="phase">
+      <div id="phaseName" class="phase-name">Breathe in</div>
+      <div id="timer" class="timer">4</div>
+      <div id="hint" class="hint">Slowly breathe in</div>
+    </div>
+  </section>
+
+  <div class="legend">
+    <div class="pill"><span class="dot blue"></span> Inhale · 4s</div>
+    <div class="pill"><span class="dot purple"></span> Hold · 7s</div>
+    <div class="pill"><span class="dot green"></span> Exhale · 8s</div>
+  </div>
+
+  <button id="toggle">Pause</button>
+  <div class="footer">Clockwise loop · 19 seconds per cycle · Repeats forever</div>
+</main>
+
+<script>
+const phases=[
+  {
+    name:"Breathe in",
+    hint:"Slowly breathe in",
+    seconds:4,
+    color:"var(--blue)",
+    edge:document.getElementById("edge0"),
+    corner:document.getElementById("corner0")
+  },
+  {
+    name:"Hold",
+    hint:"Relax and hold",
+    seconds:7,
+    color:"var(--purple)",
+    edge:document.getElementById("edge1"),
+    corner:document.getElementById("corner1")
+  },
+  {
+    name:"Breathe out",
+    hint:"Slowly breathe out",
+    seconds:8,
+    color:"var(--green)",
+    edge:document.getElementById("edge2"),
+    corner:document.getElementById("corner2")
+  }
+];
+
+const nameEl=document.getElementById("phaseName");
+const timerEl=document.getElementById("timer");
+const hintEl=document.getElementById("hint");
+const toggle=document.getElementById("toggle");
+
+let index=0;
+let start=0;
+let paused=false;
+let raf=0;
+
+function resetPhase(){
+  phases.forEach(p=>{
+    p.edge.style.transition="none";
+    p.edge.style.strokeDashoffset="1";
+    p.corner.classList.remove("active-corner");
+  });
+
+  const p=phases[index];
+  p.corner.classList.add("active-corner");
+
+  // Start each edge from zero and animate it independently.
+  void p.edge.getBoundingClientRect();
+  p.edge.style.transition=`stroke-dashoffset ${p.seconds}s linear`;
+  p.edge.style.strokeDashoffset="0";
+
+  nameEl.textContent=p.name;
+  nameEl.style.color=p.color;
+  hintEl.textContent=p.hint;
+  timerEl.textContent=p.seconds;
+}
+
+function next(){
+  index=(index+1)%phases.length;
+  resetPhase();
+  start=performance.now();
+}
+
+function loop(now){
+  if(paused)return;
+
+  if(!start)start=now;
+
+  const p=phases[index];
+  const elapsed=(now-start)/1000;
+  const left=Math.max(0,p.seconds-elapsed);
+
+  timerEl.textContent=Math.ceil(left);
+
+  if(elapsed>=p.seconds) next();
+
+  raf=requestAnimationFrame(loop);
+}
+
+toggle.addEventListener("click",()=>{
+  paused=!paused;
+
+  if(paused){
+    toggle.textContent="Resume";
+    cancelAnimationFrame(raf);
+  }else{
+    toggle.textContent="Pause";
+    resetPhase();
+    start=performance.now();
+    raf=requestAnimationFrame(loop);
+  }
+});
+
+resetPhase();
+start=performance.now();
+raf=requestAnimationFrame(loop);
+</script>
+</body>
+</html>
