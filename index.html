@@ -33,6 +33,30 @@
     text-align:center;
   }
 
+  .lang-control{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-bottom:12px;
+  }
+
+  .lang-btn{
+    padding:6px 14px;
+    font-size:.85rem;
+    border:1px solid #d0d5dd;
+    background:#fff;
+    color:var(--ink);
+    border-radius:20px;
+    box-shadow:none;
+    font-weight:600;
+  }
+
+  .lang-btn.active-lang{
+    background:var(--ink);
+    color:#fff;
+    border-color:var(--ink);
+  }
+
   h1{
     margin:0 0 6px;
     font-size:clamp(1.65rem,5vw,2.55rem);
@@ -160,6 +184,12 @@
   .dot.purple{background:var(--purple)}
   .dot.green{background:var(--green)}
 
+  .controls{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+  }
+
   button{
     border:0;
     border-radius:999px;
@@ -170,15 +200,67 @@
     font-weight:750;
     cursor:pointer;
     box-shadow:0 6px 18px rgba(23,32,51,.18);
+    transition:background-color .2s, transform .1s;
   }
 
   button:hover{transform:translateY(-1px)}
   button:active{transform:translateY(0)}
 
+  button.stop-btn{
+    background:#e53e3e;
+  }
+
+  button:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    transform:none;
+  }
+
   .footer{
     margin-top:14px;
     color:#98a2b3;
     font-size:.75rem;
+  }
+
+  /* Author Section */
+  .author-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 6px 14px 6px 8px;
+    background: #f8fafc;
+    border: 1px solid #eaecf0;
+    border-radius: 999px;
+  }
+
+  .author-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #d0d5dd;
+  }
+
+  .author-info {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .author-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .author-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
   }
 
   @media(max-width:430px){
@@ -197,15 +279,20 @@
 
 <body>
 <main class="app">
-  <h1>🌿 4–7–8 Triangle Breathing</h1>
-  <p class="subtitle">
+  <div class="lang-control">
+    <button id="langEn" class="lang-btn active-lang" onclick="setLanguage('en')">English</button>
+    <button id="langBn" class="lang-btn" onclick="setLanguage('bn')">বাংলা</button>
+  </div>
+
+  <h1 id="title">🌿 4–7–8 Triangle Breathing</h1>
+  <p id="subtitle" class="subtitle">
     Follow the triangle clockwise: breathe in, hold, then slowly breathe out.
   </p>
 
   <section class="card" aria-live="polite">
     <svg viewBox="0 0 700 620" aria-label="Clockwise animated 4-7-8 breathing triangle">
 
-      <!-- Triangle geometry: top → bottom-right → bottom-left → top = clockwise -->
+      <!-- Triangle geometry -->
       <path class="edge base blue" d="M350 65 L610 520"/>
       <path class="edge base purple" d="M610 520 L90 520"/>
       <path class="edge base green" d="M90 520 L350 65"/>
@@ -215,26 +302,22 @@
       <path id="edge1" class="edge active purple" d="M610 520 L90 520" pathLength="1"/>
       <path id="edge2" class="edge active green" d="M90 520 L350 65" pathLength="1"/>
 
-      <!-- Big expressive cartoon icons -->
+      <!-- Icons -->
       <g id="corner0" class="corner active-corner">
-        <circle class="bubble" cx="350" cy="65" r="62"
-                fill="#e9f7ff" stroke="var(--blue)"/>
+        <circle class="bubble" cx="350" cy="65" r="62" fill="#e9f7ff" stroke="var(--blue)"/>
         <text class="cartoon-face" x="350" y="67">😮‍💨</text>
       </g>
 
       <g id="corner1" class="corner">
-        <circle class="bubble" cx="610" cy="520" r="62"
-                fill="#f1edff" stroke="var(--purple)"/>
+        <circle class="bubble" cx="610" cy="520" r="62" fill="#f1edff" stroke="var(--purple)"/>
         <text class="cartoon-face" x="610" y="522">🧘</text>
       </g>
 
       <g id="corner2" class="corner">
-        <circle class="bubble" cx="90" cy="520" r="62"
-                fill="#e9fbf4" stroke="var(--green)"/>
+        <circle class="bubble" cx="90" cy="520" r="62" fill="#e9fbf4" stroke="var(--green)"/>
         <text class="cartoon-face" x="90" y="522">😌</text>
       </g>
 
-      <!-- Soft center -->
       <circle cx="350" cy="310" r="104" fill="#fafbfc" stroke="#eef0f3" stroke-width="2"/>
     </svg>
 
@@ -246,113 +329,192 @@
   </section>
 
   <div class="legend">
-    <div class="pill"><span class="dot blue"></span> Inhale · 4s</div>
-    <div class="pill"><span class="dot purple"></span> Hold · 7s</div>
-    <div class="pill"><span class="dot green"></span> Exhale · 8s</div>
+    <div class="pill"><span class="dot blue"></span> <span id="legInhale">Inhale · 4s</span></div>
+    <div class="pill"><span class="dot purple"></span> <span id="legHold">Hold · 7s</span></div>
+    <div class="pill"><span class="dot green"></span> <span id="legExhale">Exhale · 8s</span></div>
   </div>
 
-  <button id="toggle">Pause</button>
-  <div class="footer">Clockwise loop · 19 seconds per cycle · Repeats forever</div>
+  <div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" class="stop-btn">Stop</button>
+  </div>
+
+  <div id="footer" class="footer">Clockwise loop · 19 seconds per cycle · Repeats forever</div>
+
+  <!-- Author Badge -->
+  <div class="author-card">
+    <img src="images/md-siddiqur.rahman.png" alt="Dr Md Siddiqur Rahman" class="author-img" />
+    <div class="author-info">
+      <span id="authorLabel" class="author-label">Created by</span>
+      <span id="authorName" class="author-name">Dr Md Siddiqur Rahman</span>
+    </div>
+  </div>
 </main>
 
 <script>
-const phases=[
-  {
-    name:"Breathe in",
-    hint:"Slowly breathe in",
-    seconds:4,
-    color:"var(--blue)",
-    edge:document.getElementById("edge0"),
-    corner:document.getElementById("corner0")
+const translations = {
+  en: {
+    title: "🌿 4–7–8 Triangle Breathing",
+    subtitle: "Follow the triangle clockwise: breathe in, hold, then slowly breathe out.",
+    start: "Start",
+    stop: "Stop",
+    legInhale: "Inhale · 4s",
+    legHold: "Hold · 7s",
+    legExhale: "Exhale · 8s",
+    footer: "Clockwise loop · 19 seconds per cycle · Repeats forever",
+    authorLabel: "Created by",
+    authorName: "Dr Md Siddiqur Rahman",
+    phases: [
+      { name: "Breathe in", hint: "Slowly breathe in" },
+      { name: "Hold", hint: "Relax and hold" },
+      { name: "Breathe out", hint: "Slowly breathe out" }
+    ],
+    numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
   },
-  {
-    name:"Hold",
-    hint:"Relax and hold",
-    seconds:7,
-    color:"var(--purple)",
-    edge:document.getElementById("edge1"),
-    corner:document.getElementById("corner1")
-  },
-  {
-    name:"Breathe out",
-    hint:"Slowly breathe out",
-    seconds:8,
-    color:"var(--green)",
-    edge:document.getElementById("edge2"),
-    corner:document.getElementById("corner2")
+  bn: {
+    title: "🌿 ৪–৭–৮ ত্রিভুজ শ্বাস-প্রশ্বাস",
+    subtitle: "ঘড়ির কাঁটার দিকে ত্রিভুজটি অনুসরণ করুন: শ্বাস নিন, আটকে রাখুন, তারপর ধীরে ধীরে শ্বাস ছাড়ুন।",
+    start: "শুরু করুন",
+    stop: "থামুন",
+    legInhale: "শ্বাস গ্রহণ · ৪ সে",
+    legHold: "ধরে রাখা · ৭ সে",
+    legExhale: "শ্বাস ত্যাগ · ৮ সে",
+    footer: "ঘড়ির কাঁটার দিকে ঘূর্ণন · প্রতি চক্রে ১৯ সেকেন্ড · অবিরাম পুনরাবৃত্তি",
+    authorLabel: "তৈরি করেছেন",
+    authorName: "ডঃ মোঃ সিদ্দিকুর রহমান",
+    phases: [
+      { name: "শ্বাস নিন", hint: "ধীরে ধীরে শ্বাস গ্রহণ করুন" },
+      { name: "আটকে রাখুন", hint: "রিল্যাক্স করুন এবং ধরে রাখুন" },
+      { name: "শ্বাস ছাড়ুন", hint: "ধীরে ধীরে শ্বাস ত্যাগ করুন" }
+    ],
+    numbers: ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮"]
   }
+};
+
+let currentLang = "en";
+
+const phasesConfig = [
+  { seconds: 4, color: "var(--blue)", edge: document.getElementById("edge0"), corner: document.getElementById("corner0") },
+  { seconds: 7, color: "var(--purple)", edge: document.getElementById("edge1"), corner: document.getElementById("corner1") },
+  { seconds: 8, color: "var(--green)", edge: document.getElementById("edge2"), corner: document.getElementById("corner2") }
 ];
 
-const nameEl=document.getElementById("phaseName");
-const timerEl=document.getElementById("timer");
-const hintEl=document.getElementById("hint");
-const toggle=document.getElementById("toggle");
+const nameEl = document.getElementById("phaseName");
+const timerEl = document.getElementById("timer");
+const hintEl = document.getElementById("hint");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
 
-let index=0;
-let start=0;
-let paused=false;
-let raf=0;
+let index = 0;
+let start = 0;
+let isRunning = false;
+let raf = 0;
 
-function resetPhase(){
-  phases.forEach(p=>{
-    p.edge.style.transition="none";
-    p.edge.style.strokeDashoffset="1";
+function formatNumber(num) {
+  return translations[currentLang].numbers[num] || num;
+}
+
+function updateUIStrings() {
+  const t = translations[currentLang];
+  document.getElementById("title").textContent = t.title;
+  document.getElementById("subtitle").textContent = t.subtitle;
+  startBtn.textContent = t.start;
+  stopBtn.textContent = t.stop;
+  document.getElementById("legInhale").textContent = t.legInhale;
+  document.getElementById("legHold").textContent = t.legHold;
+  document.getElementById("legExhale").textContent = t.legExhale;
+  document.getElementById("footer").textContent = t.footer;
+  document.getElementById("authorLabel").textContent = t.authorLabel;
+  document.getElementById("authorName").textContent = t.authorName;
+
+  // Update current active phase text
+  const pText = t.phases[index];
+  nameEl.textContent = pText.name;
+  hintEl.textContent = pText.hint;
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.getElementById("langEn").classList.toggle("active-lang", lang === "en");
+  document.getElementById("langBn").classList.toggle("active-lang", lang === "bn");
+  updateUIStrings();
+  
+  if (!isRunning) {
+    const pConf = phasesConfig[index];
+    timerEl.textContent = formatNumber(pConf.seconds);
+  }
+}
+
+function resetPhase() {
+  phasesConfig.forEach(p => {
+    p.edge.style.transition = "none";
+    p.edge.style.strokeDashoffset = "1";
     p.corner.classList.remove("active-corner");
   });
 
-  const p=phases[index];
-  p.corner.classList.add("active-corner");
+  const pConf = phasesConfig[index];
+  const pText = translations[currentLang].phases[index];
 
-  // Start each edge from zero and animate it independently.
-  void p.edge.getBoundingClientRect();
-  p.edge.style.transition=`stroke-dashoffset ${p.seconds}s linear`;
-  p.edge.style.strokeDashoffset="0";
+  pConf.corner.classList.add("active-corner");
 
-  nameEl.textContent=p.name;
-  nameEl.style.color=p.color;
-  hintEl.textContent=p.hint;
-  timerEl.textContent=p.seconds;
-}
-
-function next(){
-  index=(index+1)%phases.length;
-  resetPhase();
-  start=performance.now();
-}
-
-function loop(now){
-  if(paused)return;
-
-  if(!start)start=now;
-
-  const p=phases[index];
-  const elapsed=(now-start)/1000;
-  const left=Math.max(0,p.seconds-elapsed);
-
-  timerEl.textContent=Math.ceil(left);
-
-  if(elapsed>=p.seconds) next();
-
-  raf=requestAnimationFrame(loop);
-}
-
-toggle.addEventListener("click",()=>{
-  paused=!paused;
-
-  if(paused){
-    toggle.textContent="Resume";
-    cancelAnimationFrame(raf);
-  }else{
-    toggle.textContent="Pause";
-    resetPhase();
-    start=performance.now();
-    raf=requestAnimationFrame(loop);
+  if (isRunning) {
+    void pConf.edge.getBoundingClientRect();
+    pConf.edge.style.transition = `stroke-dashoffset ${pConf.seconds}s linear`;
+    pConf.edge.style.strokeDashoffset = "0";
   }
+
+  nameEl.textContent = pText.name;
+  nameEl.style.color = pConf.color;
+  hintEl.textContent = pText.hint;
+  timerEl.textContent = formatNumber(pConf.seconds);
+}
+
+function next() {
+  index = (index + 1) % phasesConfig.length;
+  resetPhase();
+  start = performance.now();
+}
+
+function loop(now) {
+  if (!isRunning) return;
+
+  if (!start) start = now;
+
+  const pConf = phasesConfig[index];
+  const elapsed = (now - start) / 1000;
+  const left = Math.max(0, pConf.seconds - elapsed);
+
+  timerEl.textContent = formatNumber(Math.ceil(left));
+
+  if (elapsed >= pConf.seconds) next();
+
+  raf = requestAnimationFrame(loop);
+}
+
+startBtn.addEventListener("click", () => {
+  if (isRunning) return;
+  isRunning = true;
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+  
+  resetPhase();
+  start = performance.now();
+  raf = requestAnimationFrame(loop);
 });
 
+stopBtn.addEventListener("click", () => {
+  isRunning = false;
+  cancelAnimationFrame(raf);
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  
+  index = 0;
+  resetPhase();
+});
+
+// Initial Setup
+stopBtn.disabled = true;
 resetPhase();
-start=performance.now();
-raf=requestAnimationFrame(loop);
 </script>
 </body>
 </html>
