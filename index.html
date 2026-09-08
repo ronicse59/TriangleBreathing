@@ -281,6 +281,7 @@
 <main class="app">
   <div class="lang-control">
     <button id="langEn" class="lang-btn active-lang" onclick="setLanguage('en')">English</button>
+    <button id="langFr" class="lang-btn" onclick="setLanguage('fr')">Français</button>
     <button id="langBn" class="lang-btn" onclick="setLanguage('bn')">বাংলা</button>
   </div>
 
@@ -371,6 +372,24 @@ const translations = {
     ],
     numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
   },
+  fr: {
+    title: "🌿 Respiration en Triangle 4–7–8",
+    subtitle: "Suivez le triangle dans le sens des aiguilles d'une montre : inspirez, retenez, puis expirez lentement.",
+    start: "Démarrer",
+    stop: "Arrêter",
+    legInhale: "Inspirer · 4s",
+    legHold: "Retenir · 7s",
+    legExhale: "Expirer · 8s",
+    footer: "Boucle horaire · 19 secondes par cycle · Répétition continue",
+    authorLabel: "Créé par",
+    authorName: "Dr Md Siddiqur Rahman",
+    phases: [
+      { name: "Inspirez", hint: "Inspirez lentement" },
+      { name: "Retenez", hint: "Détendez-vous et retenez" },
+      { name: "Expirez", hint: "Expirez lentement" }
+    ],
+    numbers: ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
+  },
   bn: {
     title: "🌿 ৪–৭–৮ ত্রিভুজ শ্বাস-প্রশ্বাস",
     subtitle: "ঘড়ির কাঁটার দিকে ত্রিভুজটি অনুসরণ করুন: শ্বাস নিন, আটকে রাখুন, তারপর ধীরে ধীরে শ্বাস ছাড়ুন।",
@@ -436,6 +455,7 @@ function updateUIStrings() {
 function setLanguage(lang) {
   currentLang = lang;
   document.getElementById("langEn").classList.toggle("active-lang", lang === "en");
+  document.getElementById("langFr").classList.toggle("active-lang", lang === "fr");
   document.getElementById("langBn").classList.toggle("active-lang", lang === "bn");
   updateUIStrings();
   
